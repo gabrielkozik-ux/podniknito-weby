@@ -1,62 +1,71 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="cs" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop: Marketing a Google | 18.11.2025</title>
+    <title>Workshop Peer-Review | Klub Podnikavců v Tišnově</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #007bff; --danger-color: #dc3545; --warning-color: #ffc107; --success-color: #28a745; --light-gray: #f8f9fa; --border-color: #e9ecef; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 20px auto; padding: 0 20px; background-color: #f9f9f9; color: #333; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
-        h1 { font-size: 1.5em; margin: 0; }
-        section { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        button { border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 1em; padding: 10px 15px; transition: background-color 0.2s; }
-        button:hover { opacity: 0.9; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .action-btn { font-size: 0.8em; padding: 5px 10px; margin-left: 5px; }
-        .delete-btn { background-color: var(--danger-color); color: white; }
-        .edit-btn { background-color: var(--warning-color); color: black; }
-        .save-btn { background-color: var(--success-color); color: white; }
-        .cancel-btn { background-color: #6c757d; color: white; }
-        .website-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 20px; margin-top: 20px; }
-        .website-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .website-card a { font-weight: bold; font-size: 1.2em; color: var(--primary-color); text-decoration: none; }
-        .meta-info { font-size: 0.85em; color: #6c757d; }
-        .comment { background-color: var(--light-gray); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; margin-top: 10px; }
-        .comment-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .comment-text { flex-grow: 1; word-break: break-word; }
-        .comment-actions { flex-shrink: 0; white-space: nowrap; }
-        input[type="url"], input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-size: 1em; }
-        #website-sharing { display: none; }
-        #pagination-container { text-align: center; margin-top: 30px; }
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .comment-input:focus { box-shadow: 0 0 0 2px #3b82f6; }
     </style>
 </head>
-<body>
+<body class="h-full flex flex-col">
 
-    <header>
-        <h1>Workshop Peer-Review (upraveno na GitHubu) !</h1>
-        <div id="auth-container">
-            <button id="login-btn" class="btn-primary">Přihlásit se přes Google</button>
-            <span id="user-info" style="display: none;"></span>
-            <button id="logout-btn" style="display: none;" class="action-btn cancel-btn">Odhlásit</button>
-        </div>
-    </header>
-
-    <main>
-        <section id="website-sharing">
-            <h3>1. Přidej svůj web k revizi</h3>
-            <form id="website-form"><input type="url" id="website-url" placeholder="https://www.vas-web.cz" required><button type="submit" class="btn-primary">Přidat web</button></form>
-        </section>
-
-        <section id="peer-review">
-            <h3>2. Weby k revizi a diskuze</h3>
-            <div id="website-list"></div>
-            <div id="pagination-container">
-                <button id="load-more-btn" class="btn-primary" style="display: none;">Načíst další</button>
+    <div class="flex-grow">
+        <header class="bg-white shadow-sm">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">Workshop Peer-Review</h1>
+                    <p class="text-sm text-gray-500">Klub Podnikavců v Tišnově</p>
+                </div>
+                <div id="auth-container" class="flex items-center space-x-4">
+                    <div id="user-info" class="text-right" style="display: none;">
+                        <p class="text-sm font-medium text-gray-700"></p>
+                        <p class="text-xs text-gray-500"></p>
+                    </div>
+                    <button id="login-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.418 2.865 8.166 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0020 10c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path></svg>
+                        Přihlásit se
+                    </button>
+                    <button id="logout-btn" style="display: none;" class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Odhlásit</button>
+                </div>
             </div>
-        </section>
-    </main>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <section id="website-sharing" class="bg-white p-6 rounded-lg shadow-sm mb-8" style="display: none;">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">1. Přidej svůj web k revizi</h3>
+                <form id="website-form" class="flex items-center space-x-3">
+                    <input type="url" id="website-url" placeholder="https://www.vas-web.cz" required class="flex-grow block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Přidat web</button>
+                </form>
+            </section>
+
+            <section id="peer-review">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">2. Weby k revizi a diskuze</h3>
+                <div id="website-list" class="space-y-6">
+                    <!-- Website cards will be injected here -->
+                </div>
+                <div id="pagination-container" class="text-center mt-8">
+                    <button id="load-more-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" style="display: none;">Načíst další</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="bg-white mt-8">
+        <div class="max-w-4xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-xs text-gray-500 text-center">
+            <p>&copy; <span id="copyright-year"></span> Gabriel Kožík</p>
+            <p class="mt-1">Tato stránka byla vytvořena pro vzdělávací účely a pro použití v rámci workshopu pořádaného Klubem Podnikavců v Tišnově. Jakékoliv zneužití je protiprávní.</p>
+        </div>
+    </footer>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -69,16 +78,18 @@
         dayjs.extend(dayjs_plugin_relativeTime);
         dayjs.locale('cs');
 
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBaEdN0nbnshhUBvb5AwT8zi2EXLFhST0s",
-  authDomain: "podniknito-web.firebaseapp.com",
-  projectId: "podniknito-web",
-  storageBucket: "podniknito-web.firebasestorage.app",
-  messagingSenderId: "1069291640297",
-  appId: "1:1069291640297:web:7e59ef810ba89ee9df2778",
-  measurementId: "G-3K856K8D5H"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaEdN0nbnshhUBvb5AwT8zi2EXLFhST0s",
+            authDomain: "podniknito-web.firebaseapp.com",
+            projectId: "podniknito-web",
+            storageBucket: "podniknito-web.firebasestorage.app",
+            messagingSenderId: "1069291640297",
+            appId: "1:1069291640297:web:7e59ef810ba89ee9df2778",
+            measurementId: "G-3K856K8D5H"
+        };
         
         // ZDE VLOŽTE SVÉ ZKOPÍROVANÉ UID
         const ADMIN_UID = "a9Wd88SXabWPj4UIEGgWUX2O9W13";
@@ -90,7 +101,7 @@ const firebaseConfig = {
         document.addEventListener('DOMContentLoaded', () => {
             const loginBtn = document.getElementById('login-btn');
             const logoutBtn = document.getElementById('logout-btn');
-            const userInfo = document.getElementById('user-info');
+            const userInfoDiv = document.getElementById('user-info');
             const websiteSharingSection = document.getElementById('website-sharing');
             const websiteForm = document.getElementById('website-form');
             const websiteUrlInput = document.getElementById('website-url');
@@ -111,14 +122,16 @@ const firebaseConfig = {
             auth.onAuthStateChanged(user => {
                 currentUser = user;
                 if (user) {
-                    userInfo.textContent = `Přihlášen: ${user.displayName}`;
+                    userInfoDiv.children[0].textContent = user.displayName;
+                    userInfoDiv.children[1].textContent = user.email;
                     loginBtn.style.display = 'none';
-                    userInfo.style.display = 'inline';
-                    logoutBtn.style.display = 'inline';
+                    userInfoDiv.style.display = 'block';
+                    logoutBtn.style.display = 'inline-flex';
                     websiteSharingSection.style.display = 'block';
+                    websiteSharingSection.classList.add('fade-in');
                 } else {
-                    loginBtn.style.display = 'inline';
-                    userInfo.style.display = 'none';
+                    loginBtn.style.display = 'inline-flex';
+                    userInfoDiv.style.display = 'none';
                     logoutBtn.style.display = 'none';
                     websiteSharingSection.style.display = 'none';
                 }
@@ -139,7 +152,8 @@ const firebaseConfig = {
                         url: websiteUrlInput.value,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         authorName: currentUser.displayName,
-                        authorId: currentUser.uid
+                        authorId: currentUser.uid,
+                        authorPhotoURL: currentUser.photoURL,
                     }).then(() => {
                         websiteUrlInput.value = '';
                     });
@@ -153,6 +167,9 @@ const firebaseConfig = {
                 query.get().then(documentSnapshots => {
                     if (documentSnapshots.empty) {
                         loadMoreBtn.style.display = 'none';
+                        if (websiteListDiv.innerHTML === '') {
+                             websiteListDiv.innerHTML = `<div class="text-center text-gray-500 py-8">Zatím nebyly přidány žádné weby. Buďte první!</div>`;
+                        }
                         return;
                     }
                     lastVisibleWebsite = documentSnapshots.docs[documentSnapshots.docs.length-1];
@@ -162,21 +179,34 @@ const firebaseConfig = {
                         const websiteId = doc.id;
                         const isAuthor = currentUser && currentUser.uid === website.authorId;
                         const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
-                        const actionsHtml = (isAuthor || isAdmin) ? `<button class="action-btn delete-btn" data-type="website-delete" data-id="${websiteId}">Smazat</button>` : '';
+                        
                         const timeAgo = website.createdAt ? dayjs(website.createdAt.toDate()).fromNow() : '';
                         const card = document.createElement('div');
-                        card.className = 'website-card';
+                        card.className = 'bg-white rounded-lg shadow-sm overflow-hidden fade-in';
                         card.innerHTML = `
-                            <div class="website-header">
-                                <div>
-                                    <a href="${website.url}" target="_blank" rel="noopener noreferrer">${website.url}</a>
-                                    <div class="meta-info">Přidal: <strong>${website.authorName || 'Anonym'}</strong> • ${timeAgo}</div>
+                            <div class="p-5 border-b border-gray-200">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-center space-x-3">
+                                        <img class="h-10 w-10 rounded-full" src="${website.authorPhotoURL || 'https://placehold.co/40x40/E2E8F0/718096?text=U'}" alt="${website.authorName || 'Anonym'}">
+                                        <div>
+                                            <a href="${website.url}" target="_blank" rel="noopener noreferrer" class="text-base font-semibold text-indigo-600 hover:text-indigo-800 break-all">${website.url}</a>
+                                            <p class="text-xs text-gray-500">Přidal: <strong>${website.authorName || 'Anonym'}</strong> • ${timeAgo}</p>
+                                        </div>
+                                    </div>
+                                    ${(isAuthor || isAdmin) ? `<button class="text-gray-400 hover:text-red-600 focus:outline-none" data-type="website-delete" data-id="${websiteId}" title="Smazat web">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                                    </button>` : ''}
                                 </div>
-                                <div>${actionsHtml}</div>
                             </div>
-                            <div class="comments-section" id="comments-container-${websiteId}">
-                                <div class="comments-list" id="comments-${websiteId}"></div>
-                                ${currentUser ? `<form class="comment-form" data-id="${websiteId}"><input type="text" placeholder="Přidej postřeh..." required><button type="submit" class="btn-primary action-btn">Odeslat</button></form>` : '<p><small>Pro přidání komentáře se musíte přihlásit.</small></p>'}
+                            <div class="bg-gray-50 px-5 py-4">
+                                <div class="comments-list space-y-4" id="comments-${websiteId}"></div>
+                                ${currentUser ? `<form class="comment-form mt-4 flex items-start space-x-3" data-id="${websiteId}">
+                                    <img class="h-8 w-8 rounded-full" src="${currentUser.photoURL || 'https://placehold.co/32x32/E2E8F0/718096?text=U'}" alt="Your avatar">
+                                    <div class="flex-grow">
+                                        <input type="text" class="comment-input block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Přidej svůj postřeh..." required>
+                                    </div>
+                                    <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Odeslat</button>
+                                </form>` : '<p class="text-sm text-gray-500 mt-4">Pro přidání komentáře se prosím přihlaste.</p>'}
                             </div>`;
                         websiteListDiv.appendChild(card);
                         loadComments(websiteId);
@@ -197,20 +227,25 @@ const firebaseConfig = {
                         const isAuthor = currentUser && currentUser.uid === comment.authorId;
                         const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
                         const timeAgo = comment.createdAt ? dayjs(comment.createdAt.toDate()).fromNow() : '';
-                        const actionsHtml = (isAuthor || isAdmin) ? `
-                            ${isAuthor ? `<button class="action-btn edit-btn" data-type="comment-edit" data-website-id="${websiteId}" data-id="${commentId}">Upravit</button>` : ''}
-                            <button class="action-btn delete-btn" data-type="comment-delete" data-website-id="${websiteId}" data-id="${commentId}">Smazat</button>
-                        ` : '';
+                        
                         const commentDiv = document.createElement('div');
-                        commentDiv.className = 'comment';
+                        commentDiv.className = 'comment-container flex items-start space-x-3';
                         commentDiv.innerHTML = `
-                            <div class="comment-header">
-                                <div class="comment-text">
-                                    <strong>${comment.authorName || 'Anonym'}:</strong>
-                                    <span>${comment.text}</span>
-                                    <div class="meta-info">${timeAgo}</div>
+                            <img class="h-8 w-8 rounded-full" src="${comment.authorPhotoURL || 'https://placehold.co/32x32/E2E8F0/718096?text=U'}" alt="${comment.authorName || 'Anonym'}">
+                            <div class="flex-1">
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <div class="comment-header flex justify-between items-center">
+                                        <div class="text-sm">
+                                            <span class="font-semibold text-gray-800">${comment.authorName || 'Anonym'}</span>
+                                            <span class="text-gray-500 ml-2 text-xs">${timeAgo}</span>
+                                        </div>
+                                        ${(isAuthor || isAdmin) ? `<div class="comment-actions flex items-center space-x-2">
+                                            ${isAuthor ? `<button class="text-gray-400 hover:text-indigo-600" data-type="comment-edit" data-website-id="${websiteId}" data-id="${commentId}" title="Upravit"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg></button>` : ''}
+                                            <button class="text-gray-400 hover:text-red-600" data-type="comment-delete" data-website-id="${websiteId}" data-id="${commentId}" title="Smazat"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button>
+                                        </div>` : ''}
+                                    </div>
+                                    <p class="comment-text text-sm text-gray-700 mt-1">${comment.text}</p>
                                 </div>
-                                <div class="comment-actions">${actionsHtml}</div>
                             </div>`;
                         commentsList.appendChild(commentDiv);
                     });
@@ -218,28 +253,52 @@ const firebaseConfig = {
             }
 
             websiteListDiv.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('action-btn')) return;
-                const type = e.target.dataset.type;
-                const id = e.target.dataset.id;
-                const websiteId = e.target.dataset.websiteId;
+                const button = e.target.closest('button');
+                if (!button || !button.dataset.type) return;
 
+                const { type, id, websiteId } = button.dataset;
+                
                 if (type === 'website-delete') {
-                    if (confirm(`Opravdu chcete smazat tento web?`)) db.collection('websites').doc(id).delete();
+                    if (confirm(`Opravdu chcete smazat tento web?`)) {
+                        db.collection('websites').doc(id).delete().catch(err => console.error("Error deleting website:", err));
+                    }
                 } else if (type === 'comment-delete') {
-                    if (confirm(`Opravdu chcete smazat tento komentář?`)) db.collection('websites').doc(websiteId).collection('comments').doc(id).delete();
+                    if (confirm(`Opravdu chcete smazat tento komentář?`)) {
+                        db.collection('websites').doc(websiteId).collection('comments').doc(id).delete().catch(err => console.error("Error deleting comment:", err));
+                    }
                 } else if (type === 'comment-edit') {
-                    const commentHeader = e.target.closest('.comment-header');
-                    const commentTextDiv = commentHeader.querySelector('.comment-text');
-                    const originalText = commentTextDiv.querySelector('span').textContent;
-                    commentTextDiv.innerHTML = `<input type="text" class="edit-input" value="${originalText}">`;
-                    commentHeader.querySelector('.comment-actions').innerHTML = `
-                        <button class="action-btn save-btn" data-type="comment-save" data-website-id="${websiteId}" data-id="${id}">Uložit</button>
-                        <button class="action-btn cancel-btn" data-type="comment-cancel" data-website-id="${websiteId}">Zrušit</button>`;
+                    const commentContainer = button.closest('.comment-container');
+                    const commentTextP = commentContainer.querySelector('.comment-text');
+                    const originalText = commentTextP.textContent;
+                    
+                    const editFormHTML = `
+                        <div class="edit-form-container mt-1">
+                            <input type="text" class="edit-input block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm sm:text-sm" value="${originalText}">
+                            <div class="mt-2 space-x-2">
+                                <button class="text-xs font-semibold text-indigo-600 hover:text-indigo-800" data-type="comment-save" data-website-id="${websiteId}" data-id="${id}">Uložit</button>
+                                <button class="text-xs font-semibold text-gray-600 hover:text-gray-800" data-type="comment-cancel" data-website-id="${websiteId}">Zrušit</button>
+                            </div>
+                        </div>`;
+
+                    commentTextP.style.display = 'none';
+                    button.closest('.comment-header').insertAdjacentHTML('afterend', editFormHTML);
+                    button.closest('.comment-actions').style.display = 'none';
+
                 } else if (type === 'comment-save') {
-                    const newText = e.target.closest('.comment-header').querySelector('.edit-input').value;
-                    if (newText) db.collection('websites').doc(websiteId).collection('comments').doc(id).update({ text: newText });
+                    const editContainer = button.closest('.edit-form-container');
+                    const newText = editContainer.querySelector('.edit-input').value;
+                    if (newText) {
+                        db.collection('websites').doc(websiteId).collection('comments').doc(id).update({ text: newText })
+                        .catch(err => {
+                             console.error("Error updating comment:", err);
+                             loadComments(websiteId); // Restore on error
+                        });
+                    }
                 } else if (type === 'comment-cancel') {
-                    loadComments(websiteId);
+                    const commentContainer = button.closest('.comment-container');
+                    commentContainer.querySelector('.edit-form-container').remove();
+                    commentContainer.querySelector('.comment-text').style.display = 'block';
+                    commentContainer.querySelector('.comment-actions').style.display = 'flex';
                 }
             });
 
@@ -254,10 +313,11 @@ const firebaseConfig = {
                             text: commentInput.value,
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                             authorName: currentUser.displayName,
-                            authorId: currentUser.uid
+                            authorId: currentUser.uid,
+                            authorPhotoURL: currentUser.photoURL,
                         }).then(() => {
                             commentInput.value = '';
-                        });
+                        }).catch(err => console.error("Error adding comment: ", err));
                     }
                 }
             });

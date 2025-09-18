@@ -1,6 +1,10 @@
-name: Deploy to Firebase Hosting on merge
+name: Deploy to Firebase Hosting
 'on':
   push:
+    branches:
+      - main
+  pull_request:
+    # Spustí se pro jakýkoliv Pull Request cílený na větev 'main'
     branches:
       - main
 jobs:
@@ -12,5 +16,6 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PODNIKNITO_WEB }}'
-          channelId: live
+          # ZMĚNA: Pokud je to Pull Request, nasadí se na dočasný kanál, jinak na ostrý 'live'
+          channelId: '${{ github.event.pull_request.number && format(''pr-{0}'', github.event.pull_request.number) || ''live'' }}'
           projectId: podniknito-web

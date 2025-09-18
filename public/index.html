@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop: Marketing a Google | 18.11.2025</title>
+    <style>
+        :root { --primary-color: #007bff; --danger-color: #dc3545; --warning-color: #ffc107; --success-color: #28a745; --light-gray: #f8f9fa; --border-color: #e9ecef; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 20px auto; padding: 0 20px; background-color: #f9f9f9; color: #333; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        h1 { font-size: 1.5em; margin: 0; }
+        section { background-color: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        button { border: none; border-radius: 4px; cursor: pointer; font-family: inherit; font-size: 1em; padding: 10px 15px; transition: background-color 0.2s; }
+        button:hover { opacity: 0.9; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .action-btn { font-size: 0.8em; padding: 5px 10px; margin-left: 5px; }
+        .delete-btn { background-color: var(--danger-color); color: white; }
+        .edit-btn { background-color: var(--warning-color); color: black; }
+        .save-btn { background-color: var(--success-color); color: white; }
+        .cancel-btn { background-color: #6c757d; color: white; }
+        .website-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 20px; margin-top: 20px; }
+        .website-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .website-card a { font-weight: bold; font-size: 1.2em; color: var(--primary-color); text-decoration: none; }
+        .meta-info { font-size: 0.85em; color: #6c757d; }
+        .comment { background-color: var(--light-gray); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; margin-top: 10px; }
+        .comment-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .comment-text { flex-grow: 1; word-break: break-word; }
+        .comment-actions { flex-shrink: 0; white-space: nowrap; }
+        input[type="url"], input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-size: 1em; }
+        #website-sharing { display: none; }
+        #pagination-container { text-align: center; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Workshop Peer-Review</h1>
+        <div id="auth-container">
+            <button id="login-btn" class="btn-primary">Přihlásit se přes Google</button>
+            <span id="user-info" style="display: none;"></span>
+            <button id="logout-btn" style="display: none;" class="action-btn cancel-btn">Odhlásit</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="website-sharing">
+            <h3>1. Přidej svůj web k revizi</h3>
+            <form id="website-form"><input type="url" id="website-url" placeholder="https://www.vas-web.cz" required><button type="submit" class="btn-primary">Přidat web</button></form>
+        </section>
+
+        <section id="peer-review">
+            <h3>2. Weby k revizi a diskuze</h3>
+            <div id="website-list"></div>
+            <div id="pagination-container">
+                <button id="load-more-btn" class="btn-primary" style="display: none;">Načíst další</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/cs.js"></script>
+
+    <script>
+        dayjs.extend(dayjs_plugin_relativeTime);
+        dayjs.locale('cs');
+
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBaEdN0nbnshhUBvb5AwT8zi2EXLFhST0s",
+  authDomain: "podniknito-web.firebaseapp.com",
+  projectId: "podniknito-web",
+  storageBucket: "podniknito-web.firebasestorage.app",
+  messagingSenderId: "1069291640297",
+  appId: "1:1069291640297:web:7e59ef810ba89ee9df2778",
+  measurementId: "G-3K856K8D5H"
+};
+        
+        // ZDE VLOŽTE SVÉ ZKOPÍROVANÉ UID
+        const ADMIN_UID = "a9Wd88SXabWPj4UIEGgWUX2O9W13";
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const userInfo = document.getElementById('user-info');
+            const websiteSharingSection = document.getElementById('website-sharing');
+            const websiteForm = document.getElementById('website-form');
+            const websiteUrlInput = document.getElementById('website-url');
+            const websiteListDiv = document.getElementById('website-list');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            
+            let currentUser = null;
+            let lastVisibleWebsite = null;
+            const WEBSITES_PER_PAGE = 5;
+
+            loginBtn.addEventListener('click', () => {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                auth.signInWithPopup(provider).catch(error => console.error("Chyba při přihlášení: ", error));
+            });
+
+            logoutBtn.addEventListener('click', () => auth.signOut());
+
+            auth.onAuthStateChanged(user => {
+                currentUser = user;
+                if (user) {
+                    userInfo.textContent = `Přihlášen: ${user.displayName}`;
+                    loginBtn.style.display = 'none';
+                    userInfo.style.display = 'inline';
+                    logoutBtn.style.display = 'inline';
+                    websiteSharingSection.style.display = 'block';
+                } else {
+                    loginBtn.style.display = 'inline';
+                    userInfo.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                    websiteSharingSection.style.display = 'none';
+                }
+                resetAndLoadWebsites();
+            });
+
+            function resetAndLoadWebsites() {
+                websiteListDiv.innerHTML = '';
+                lastVisibleWebsite = null;
+                loadMoreBtn.style.display = 'block';
+                loadWebsites();
+            }
+            
+            websiteForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (currentUser && websiteUrlInput.value) {
+                    db.collection('websites').add({
+                        url: websiteUrlInput.value,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        authorName: currentUser.displayName,
+                        authorId: currentUser.uid
+                    }).then(() => {
+                        websiteUrlInput.value = '';
+                    });
+                }
+            });
+
+            function loadWebsites() {
+                let query = db.collection('websites').orderBy('createdAt', 'desc').limit(WEBSITES_PER_PAGE);
+                if (lastVisibleWebsite) query = query.startAfter(lastVisibleWebsite);
+
+                query.get().then(documentSnapshots => {
+                    if (documentSnapshots.empty) {
+                        loadMoreBtn.style.display = 'none';
+                        return;
+                    }
+                    lastVisibleWebsite = documentSnapshots.docs[documentSnapshots.docs.length-1];
+
+                    documentSnapshots.forEach(doc => {
+                        const website = doc.data();
+                        const websiteId = doc.id;
+                        const isAuthor = currentUser && currentUser.uid === website.authorId;
+                        const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
+                        const actionsHtml = (isAuthor || isAdmin) ? `<button class="action-btn delete-btn" data-type="website-delete" data-id="${websiteId}">Smazat</button>` : '';
+                        const timeAgo = website.createdAt ? dayjs(website.createdAt.toDate()).fromNow() : '';
+                        const card = document.createElement('div');
+                        card.className = 'website-card';
+                        card.innerHTML = `
+                            <div class="website-header">
+                                <div>
+                                    <a href="${website.url}" target="_blank" rel="noopener noreferrer">${website.url}</a>
+                                    <div class="meta-info">Přidal: <strong>${website.authorName || 'Anonym'}</strong> • ${timeAgo}</div>
+                                </div>
+                                <div>${actionsHtml}</div>
+                            </div>
+                            <div class="comments-section" id="comments-container-${websiteId}">
+                                <div class="comments-list" id="comments-${websiteId}"></div>
+                                ${currentUser ? `<form class="comment-form" data-id="${websiteId}"><input type="text" placeholder="Přidej postřeh..." required><button type="submit" class="btn-primary action-btn">Odeslat</button></form>` : '<p><small>Pro přidání komentáře se musíte přihlásit.</small></p>'}
+                            </div>`;
+                        websiteListDiv.appendChild(card);
+                        loadComments(websiteId);
+                    });
+                });
+            }
+
+            loadMoreBtn.addEventListener('click', loadWebsites);
+
+            function loadComments(websiteId) {
+                db.collection('websites').doc(websiteId).collection('comments').orderBy('createdAt', 'asc').onSnapshot(commentSnapshot => {
+                    const commentsList = document.getElementById(`comments-${websiteId}`);
+                    if (!commentsList) return;
+                    commentsList.innerHTML = '';
+                    commentSnapshot.forEach(commentDoc => {
+                        const comment = commentDoc.data();
+                        const commentId = commentDoc.id;
+                        const isAuthor = currentUser && currentUser.uid === comment.authorId;
+                        const isAdmin = currentUser && currentUser.uid === ADMIN_UID;
+                        const timeAgo = comment.createdAt ? dayjs(comment.createdAt.toDate()).fromNow() : '';
+                        const actionsHtml = (isAuthor || isAdmin) ? `
+                            ${isAuthor ? `<button class="action-btn edit-btn" data-type="comment-edit" data-website-id="${websiteId}" data-id="${commentId}">Upravit</button>` : ''}
+                            <button class="action-btn delete-btn" data-type="comment-delete" data-website-id="${websiteId}" data-id="${commentId}">Smazat</button>
+                        ` : '';
+                        const commentDiv = document.createElement('div');
+                        commentDiv.className = 'comment';
+                        commentDiv.innerHTML = `
+                            <div class="comment-header">
+                                <div class="comment-text">
+                                    <strong>${comment.authorName || 'Anonym'}:</strong>
+                                    <span>${comment.text}</span>
+                                    <div class="meta-info">${timeAgo}</div>
+                                </div>
+                                <div class="comment-actions">${actionsHtml}</div>
+                            </div>`;
+                        commentsList.appendChild(commentDiv);
+                    });
+                });
+            }
+
+            websiteListDiv.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('action-btn')) return;
+                const type = e.target.dataset.type;
+                const id = e.target.dataset.id;
+                const websiteId = e.target.dataset.websiteId;
+
+                if (type === 'website-delete') {
+                    if (confirm(`Opravdu chcete smazat tento web?`)) db.collection('websites').doc(id).delete();
+                } else if (type === 'comment-delete') {
+                    if (confirm(`Opravdu chcete smazat tento komentář?`)) db.collection('websites').doc(websiteId).collection('comments').doc(id).delete();
+                } else if (type === 'comment-edit') {
+                    const commentHeader = e.target.closest('.comment-header');
+                    const commentTextDiv = commentHeader.querySelector('.comment-text');
+                    const originalText = commentTextDiv.querySelector('span').textContent;
+                    commentTextDiv.innerHTML = `<input type="text" class="edit-input" value="${originalText}">`;
+                    commentHeader.querySelector('.comment-actions').innerHTML = `
+                        <button class="action-btn save-btn" data-type="comment-save" data-website-id="${websiteId}" data-id="${id}">Uložit</button>
+                        <button class="action-btn cancel-btn" data-type="comment-cancel" data-website-id="${websiteId}">Zrušit</button>`;
+                } else if (type === 'comment-save') {
+                    const newText = e.target.closest('.comment-header').querySelector('.edit-input').value;
+                    if (newText) db.collection('websites').doc(websiteId).collection('comments').doc(id).update({ text: newText });
+                } else if (type === 'comment-cancel') {
+                    loadComments(websiteId);
+                }
+            });
+
+            websiteListDiv.addEventListener('submit', (e) => {
+                if (e.target.classList.contains('comment-form') && currentUser) {
+                    e.preventDefault();
+                    const form = e.target;
+                    const websiteId = form.dataset.id;
+                    const commentInput = form.querySelector('input');
+                    if(commentInput.value) {
+                         db.collection('websites').doc(websiteId).collection('comments').add({
+                            text: commentInput.value,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            authorName: currentUser.displayName,
+                            authorId: currentUser.uid
+                        }).then(() => {
+                            commentInput.value = '';
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
